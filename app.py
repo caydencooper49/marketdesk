@@ -395,17 +395,15 @@ elif page == "Order Ticket":
                     f"Available simulated shares: {available_shares:g}"
                 )
 
-            with st.form("paper_order_form"):
-                confirmed = st.checkbox(
-                    f"I confirm this simulated {side} order "
-                    f"for {quantity:g} shares of {symbol}."
-                )
+           confirmed = st.checkbox(
+    f"I confirm this simulated {side} order "
+    f"for {quantity:g} shares of {symbol}."
+)
 
-                submitted = st.form_submit_button(
-                    "Submit Paper Order",
-                    disabled=not confirmed,
-                )
-
+submitted = st.button(
+    "Submit Paper Order",
+    disabled=not confirmed,
+)
             if submitted:
                 try:
                     result = place_paper_order(
