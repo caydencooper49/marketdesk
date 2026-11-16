@@ -57,6 +57,7 @@ pages = [
     "Trade Log",
     "Portfolio",
     "Order Ticket",
+    "Performance",
     "Transaction History",
 ]
 
@@ -431,6 +432,145 @@ elif page == "Order Ticket":
                 except ValueError as error:
                     st.error(str(error))
    
+
+# ---------------- PERFORMANCE ----------------
+
+elif page == "Performance":
+    st.subheader("Performance Analytics")
+
+    try:
+        summary = get_performance_summary()
+        sells = get_sell_performance()
+
+        st.caption(
+            "Performance is calculated from simulated transactions "
+            "and available daily closing prices."
+        )
+
+        # Main metrics
+        cols = st.columns(4)
+
+        cols[0].metric(
+            "Portfolio Value",
+            money(summary["total_value"]),
+        )
+
+        cols[1].metric(
+            "Total P/L",
+            money(summary["total_pl"]),
+            delta=f"{summary['total_return_pct']:.2f}%",
+        )
+
+        cols[2].metric(
+            "Realized P/L",
+            money(summary["realized_pl"]),
+        )
+
+        cols[3].metric(
+            "Unrealized P/L",
+            money(summary["unrealized_pl"]),
+        )
+
+        st.divider()
+
+        # Sell performance
+        st.subheader("Trading Statistics")
+
+        stats = st.columns(4)
+
+        stats[0].metric(
+            "Sell Transactions",
+            summary["total_sell_transactions"],
+        )
+
+        stats[1].metric(
+            "Profitable Sells",
+            summary["winning_sells"],
+        )
+
+        stats[2].metric(
+            "Unprofitable Sells",
+            summary["losing_sells"],
+        )
+
+        stats[3].metric(
+            "Profitable Sell Rate",
+            f"{summary['profitable_sell_rate']:.1f}%",
+        )
+
+        st.caption(
+            "Profitable sell rate = profitable sell transactions "
+            "divided by all sell transactions. It is not a strategy "
+            "win rate."
+        )
+
+        st.divider()
+
+        # Portfolio breakdown
+        st.subheader("Portfolio Breakdown")
+
+        breakdown = pd.DataFrame([
+            {
+                "Category": "Available Cash",
+                "Value": summary["cash"],
+            },
+            {
+                "Category": "Holdings Value",
+                "Value": summary["holdings_value"],
+            },
+        ])
+
+        st.bar_chart(
+            breakdown.set_index("Category")
+        )
+
+        # Individual sell results
+        st.divider()
+        st.subheader("Sell Performance History")
+
+        if sells:
+            sell_df = pd.DataFrame(sells)
+
+            st.dataframe(
+                sell_df,
+                use_container_width=True,
+                hide_index=True,
+            )
+
+            chart_df = sell_df[
+                ["symbol", "realized_pl"]
+            ].copy()
+
+            chart_df = chart_df.rename(
+                columns={
+                    "symbol": "Symbol",
+                    "realized_pl": "Realized P/L",
+                }
+            )
+
+            st.bar_chart(
+                chart_df.set_index("Symbol")
+            )
+        else:
+            st.info(
+                "No completed sell transactions yet. "
+                "Your sell performance will appear here."
+            )
+
+        if summary["missing_prices"]:
+            st.warning(
+                "Unable to value these holdings because prices "
+                "were unavailable: "
+                + ", ".join(summary["missing_prices"])
+            )
+
+        st.caption(
+            "Historical portfolio snapshots and maximum drawdown "
+            "will be added in the next development group."
+        )
+
+    except (ValueError, KeyError, TypeError) as error:
+        st.error(f"Performance analytics error: {error}")
 
 # ---------------- TRANSACTION HISTORY ----------------
 
