@@ -13,7 +13,7 @@ from database import (
     list_portfolio_transactions,
 )
 from simulator import check_rules, close_trade, place_paper_order
-
+from analytics import get_performance_summary, get_sell_performance
 
 st.set_page_config(
     page_title="MarketDesk",
