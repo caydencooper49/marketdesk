@@ -430,42 +430,7 @@ elif page == "Order Ticket":
 
                 except ValueError as error:
                     st.error(str(error))
-    "Submit Paper Order",
-    disabled=not confirmed,
-
-            if submitted:
-                try:
-                    result = place_paper_order(
-                        side,
-                        symbol,
-                        quantity,
-                    )
-
-                    st.success(
-                        f"Simulated {result['side']} completed: "
-                        f"{result['quantity']:g} {result['symbol']} "
-                        f"at {money(result['price'])}."
-                    )
-
-                    st.write({
-                        "Order Value": money(result["total"]),
-                        "Remaining Cash": money(result["cash_remaining"]),
-                        "Price Date": result["price_date"],
-                        "Price Source": result["price_source"],
-                    })
-
-                    st.rerun()
-
-                except ValueError as error:
-                    st.error(str(error))
-        else:
-            st.error(
-                market.get(
-                    "message",
-                    f"No daily closing price available for {symbol}.",
-                )
-            )
-
+   
 
 # ---------------- TRANSACTION HISTORY ----------------
 
