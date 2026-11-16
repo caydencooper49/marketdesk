@@ -1,10 +1,21 @@
 import sqlite3
 from pathlib import Path
 from datetime import datetime
+import os
+import psycopg
 
 DB_PATH = Path(__file__).parent / "data" / "marketdesk.db"
 STARTING_BALANCE = 100.00
+def test_supabase_connection():
+    database_url = os.getenv("SUPABASE_DB_URL")
 
+    if not database_url:
+        raise ValueError("SUPABASE_DB_URL is not configured.")
+
+    with psycopg.connect(database_url, connect_timeout=10) as con:
+        with con.cursor() as cursor:
+            cursor.execute("SELECT current_database()")
+            return cursor.fetchone()[0]
 
 def connect():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
