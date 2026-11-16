@@ -11,6 +11,7 @@ from database import (
     get_portfolio_account,
     list_holdings,
     list_portfolio_transactions,
+    test_supabase_connection,
 )
 from simulator import check_rules, close_trade, place_paper_order
 from analytics import get_performance_summary, get_sell_performance
@@ -21,16 +22,22 @@ st.set_page_config(
     layout="wide",
 )
 
-init_db()
-
-# Load the API key from Streamlit Secrets.
+# Load credentials from Streamlit Secrets first.
 try:
+    if "SUPABASE_DB_URL" in st.secrets:
+        os.environ["SUPABASE_DB_URL"] = (
+            st.secrets["SUPABASE_DB_URL"]
+        )
+
     if "ALPHA_VANTAGE_API_KEY" in st.secrets:
         os.environ["ALPHA_VANTAGE_API_KEY"] = (
             st.secrets["ALPHA_VANTAGE_API_KEY"]
         )
 except Exception:
     pass
+
+# Keep SQLite active for now.
+init_db()
 
 
 def load_market_data(symbols=None):
