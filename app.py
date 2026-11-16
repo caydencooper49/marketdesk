@@ -395,7 +395,7 @@ elif page == "Order Ticket":
                     f"Available simulated shares: {available_shares:g}"
                 )
 
-                      confirmed = st.checkbox(
+            confirmed = st.checkbox(
                 f"I confirm this simulated {side} order "
                 f"for {quantity:g} shares of {symbol}."
             )
