@@ -1,3 +1,4 @@
 streamlit>=1.35
 pandas>=2.0
 requests>=2.31
+psycopg[binary]>=3.2,<4
