@@ -432,7 +432,7 @@ elif page == "Order Ticket":
                     st.error(str(error))
     "Submit Paper Order",
     disabled=not confirmed,
-)
+
             if submitted:
                 try:
                     result = place_paper_order(
